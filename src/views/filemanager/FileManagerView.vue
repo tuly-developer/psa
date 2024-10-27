@@ -1,5 +1,6 @@
 <script>
 import Swal from "sweetalert2";
+import { Toast } from "../../utils/sweetalert2/toast";
 import axios from "@/plugins/axios";
 import moment from "moment";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -18,6 +19,7 @@ export default {
 
       currentFileSelected: null,
 
+      showFilterOptionsByDateAndStatus: false,
       loading: false,
       error: null,
 
@@ -46,7 +48,7 @@ export default {
     },
   },
 
-  beforeMount () {
+  beforeMount() {
     window.document.title = `PSA | File Manager`;
   },
 
@@ -144,18 +146,19 @@ export default {
         });
 
         if (res.status === 200 || res.status === 201 || res.status === 204) {
-          Swal.fire({
+          Toast.fire({
             icon: "success",
             title: "Archivo subido",
             text: "El archivo se ha subido correctamente.",
+            timer: 3000,
           });
           window.location.reload();
         }
-      } catch (error) {
+      } catch (err) {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: error.message || "Error al subir el archivo.",
+          text: err?.response?.data?.error || "Error al subir el archivo.",
         });
       }
     },
@@ -199,15 +202,16 @@ export default {
     },
 
     changeTableSection(section) {
-      {
-        this.sectionSelected = section;
-        this.page = 1;
-        this.dateFrom = "";
-        this.dateTo = "";
-        this.status = "";
+      this.sectionSelected = section;
+      this.page = 1;
+      this.dateFrom = "";
+      this.dateTo = "";
+      this.status = "";
 
-        this.fetchData();
-      }
+      this.fetchData();
+
+      this.currentFileSelected = null;
+      this.$refs.fileInput.value = "";
     },
 
     nextPage() {
@@ -230,6 +234,11 @@ export default {
       this.fetchData();
     },
 
+    viewFilterOptionsByDateAndStatus() {
+      this.showFilterOptionsByDateAndStatus =
+        !this.showFilterOptionsByDateAndStatus;
+    },
+
     changeDateFrom(event) {
       this.dateFrom = event.target.value;
     },
@@ -244,6 +253,7 @@ export default {
 
     applyFilterByDateAndStatus() {
       this.page = 1;
+      this.showFilterOptionsByDateAndStatus = false;
       this.fetchData();
     },
 
@@ -253,6 +263,22 @@ export default {
 
     formatTime(dateString) {
       return moment(dateString).format("HH:mm");
+    },
+
+    markErrorCircle(event) {
+      const button = event.currentTarget;
+      const span = button.querySelector(".circule-loading-error");
+      if (span) {
+        span.style.color = "white";
+      }
+    },
+
+    uncheckTheErrorCircle(event) {
+      const button = event.currentTarget;
+      const span = button.querySelector(".circule-loading-error");
+      if (span) {
+        span.style.color = "#dc3545";
+      }
     },
   },
 };
@@ -282,10 +308,124 @@ export default {
       <!-- Table -->
       <aside class="table-container">
         <article class="filter-container">
+          <div style="position: relative">
+            <aside
+              v-show="showFilterOptionsByDateAndStatus"
+              style="
+                position: absolute;
+                width: 300px;
+                background-color: white;
+                top: 25px;
+                right: -80px;
+                border-radius: 6px;
+                box-shadow: 0px 0px 10px 0px #d3d3d3;
+                z-index: 100;
+              "
+              class="py-4 px-4"
+            >
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                "
+              >
+                <h5>Filtros</h5>
+
+                <span
+                  @click="viewFilterOptionsByDateAndStatus"
+                  style="color: gray; font-size: 30px; cursor: pointer"
+                  >&times;</span
+                >
+              </div>
+
+              <div
+                style="
+                  margin-top: 20px;
+                  display: flex;
+                  justify-content: space-between;
+                  padding: 12px 10px;
+                  border-radius: 6px;
+                  border: 1px solid #d3d3d3;
+                  width: 100%;
+                "
+              >
+                <h7 style="color: gray">Fecha</h7>
+                <input
+                  :value="dateFrom"
+                  @change="changeDateFrom($event)"
+                  type="date"
+                  id="dateFrom"
+                  name="birthdaytime"
+                  style="border: none; font-size: 14px; outline: none"
+                />
+              </div>
+
+              <div
+                style="
+                  margin-top: 20px;
+                  display: flex;
+                  justify-content: space-between;
+                  padding: 12px 10px;
+                  border-radius: 6px;
+                  border: 1px solid #d3d3d3;
+                  width: 100%;
+                "
+              >
+                <h7 style="color: gray">Fecha</h7>
+                <input
+                  :value="dateTo"
+                  @change="changeDateTo($event)"
+                  type="date"
+                  id="dateFrom"
+                  name="birthdaytime"
+                  style="border: none; font-size: 14px; outline: none"
+                />
+              </div>
+
+              <select
+                :value="`${status}`"
+                style="
+                  font-size: 13px;
+                  margin-top: 20px;
+                  outline: none;
+                  padding: 15px 10px;
+                  border-radius: 6px;
+                  border: 1px solid #d3d3d3;
+                  width: 100%;
+                "
+                @change="changeStatus($event)"
+              >
+                <option value="" disabled selected>Estado</option>
+                <option value="1" label="Procesando">Procesando</option>
+                <option value="2" label="Subidos">Subidos</option>
+                <option value="3" label="Error en las cargas">
+                  Error en las cargas
+                </option>
+                <option value="4" label="En cola">En cola</option>
+              </select>
+
+              <button
+                @click="applyFilterByDateAndStatus"
+                style="
+                  width: 100%;
+                  margin-top: 20px;
+                  font-size: 13px;
+                  padding: 4px 0px;
+                  color: white;
+                  background: blue;
+                  border-radius: 6px;
+                  border: none;
+                "
+              >
+                Aplicar
+              </button>
+            </aside>
+          </div>
+
           <div
+            @click="viewFilterOptionsByDateAndStatus"
             class="filter-button-by-date"
-            data-toggle="modal"
-            data-target="#filterModal"
           >
             <span style="font-size: 15px" class="mdi mdi-filter-variant"></span>
             <p>Filtros</p>
@@ -353,12 +493,16 @@ export default {
 
               <td>
                 <button
-                  class="btn btn-sm"
-                  style="
-                    font-size: 13px;
-                    border: 1px solid gray;
-                    font-weight: 600;
+                  :class="`${
+                    data.status === 3 && 'text-loading-error'
+                  } btn btn-sm`"
+                  :style="
+                    data.status === 3
+                      ? 'font-size: 13px;border: 1px solid gray;font-weight: 600; cursor: pointer'
+                      : 'font-size: 13px;border: 1px solid gray;font-weight: 600; cursor: default'
                   "
+                  @mouseover="markErrorCircle"
+                  @mouseout="uncheckTheErrorCircle"
                   :data-toggle="data.status === 3 && 'modal'"
                   :data-target="data.status === 3 && '#errorModal' + data.id"
                 >
@@ -370,7 +514,7 @@ export default {
                         : data.status === 2
                         ? 'text-success'
                         : data.status === 3
-                        ? 'text-danger'
+                        ? 'circule-loading-error'
                         : 'text-secondary'
                     "
                     >⬤</span
@@ -555,114 +699,6 @@ export default {
             </div>
           </div>
         </article>
-
-        <!-- Filter modal -->
-        <article class="modal fade" id="filterModal">
-          <div class="modal-dialog modal-content py-4 px-4">
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-              "
-            >
-              <h3>Filtros</h3>
-
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span style="color: black; font-size: 35px" aria-hidden="true"
-                  >&times;</span
-                >
-              </button>
-            </div>
-
-            <div
-              style="
-                margin-top: 20px;
-                display: flex;
-                justify-content: space-between;
-                padding: 12px 10px;
-                border-radius: 6px;
-                border: 1px solid #d3d3d3;
-                width: 100%;
-              "
-            >
-              <h6 style="color: gray">Fecha</h6>
-              <input
-                :value="dateFrom"
-                @change="changeDateFrom($event)"
-                type="datetime-local"
-                id="dateFrom"
-                name="birthdaytime"
-                style="border: none; font-size: 14px; outline: none"
-              />
-            </div>
-
-            <div
-              style="
-                margin-top: 20px;
-                display: flex;
-                justify-content: space-between;
-                padding: 12px 10px;
-                border-radius: 6px;
-                border: 1px solid #d3d3d3;
-                width: 100%;
-              "
-            >
-              <h6 style="color: gray">Fecha</h6>
-              <input
-                :value="dateTo"
-                @change="changeDateTo($event)"
-                type="datetime-local"
-                id="dateFrom"
-                name="birthdaytime"
-                style="border: none; font-size: 14px; outline: none"
-              />
-            </div>
-
-            <select
-              :value="`${status}`"
-              style="
-                font-size: 13px;
-                margin-top: 20px;
-                outline: none;
-                padding: 15px 10px;
-                border-radius: 6px;
-                border: 1px solid #d3d3d3;
-                width: 100%;
-              "
-              @change="changeStatus($event)"
-            >
-              <option value="" disabled selected>Estado</option>
-              <option value="1" label="Procesando">Procesando</option>
-              <option value="2" label="Subidos">Subidos</option>
-              <option value="3" label="Error en las cargas">
-                Error en las cargas
-              </option>
-              <option value="4" label="En cola">En cola</option>
-            </select>
-
-            <button
-              @click="applyFilterByDateAndStatus"
-              style="
-                width: 100%;
-                margin-top: 20px;
-                font-size: 13px;
-                padding: 4px 0px;
-                color: white;
-                background: blue;
-                border-radius: 6px;
-                border: none;
-              "
-            >
-              Aplicar
-            </button>
-          </div>
-        </article>
       </aside>
     </section>
   </main>
@@ -749,14 +785,32 @@ main {
   background: rgb(1, 111, 1);
 }
 
-.table-container table tbody .circule {
-  width: 8px;
-  height: 8px;
-  background: red;
-  border-radius: 50%;
+.table-container .text-loading-error {
+  color: #1a1a32;
+}
+
+.table-container .text-loading-error:hover {
+  color: white;
+  background-color: #dc3545;
+}
+
+.table-container .circule-loading-error {
+  color: #dc3545;
 }
 
 /* Modals */
+.drop-zone {
+  margin: 13px 0px;
+  background-color: #e7f4ff;
+  color: #6c757d;
+  border-radius: 6px;
+  padding: 0px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px dashed #378fdb;
+  /* Línea punteada */
+}
+
 .load-zone {
   display: flex;
   flex-direction: column;

@@ -14,11 +14,6 @@ instance.interceptors.request.use(
     if (localStorage.getItem("token")) {
       config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
     }
-
-    if (!localStorage.getItem("token")) {
-      window.location.href = "/";
-    }
-
     return config;
   },
   function (error) {
@@ -33,7 +28,7 @@ instance.interceptors.response.use(
   function (error) {
     if (error.response.status === 401) {
       window.localStorage.removeItem("token");
-      window.location.href = "/";
+
     }
 
     return Promise.reject(error);

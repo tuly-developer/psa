@@ -55,7 +55,7 @@ export default {
           this.loading = false;
 
           if (error.response.data.message === 'Email not found') {
-            const message = "Este usuario o email no esta registrado.";
+            const message = "Este email no esta registrado.";
             Toast.fire({
               icon: "error",
               title: message,
@@ -86,7 +86,7 @@ export default {
 <template>
   <main :class="$style['main-container']">
     <section :class="$style['img-container']">
-      <img src="@/assets/favicon/favicon.png" alt="PSA image" />
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Logo-PSA.png" alt="PSA image" />
     </section>
 
     <section :class="$style['login-container']">
@@ -102,7 +102,7 @@ export default {
 
         <form @submit.prevent="loginSubmit" method="post">
           <label for="email"> Nombre de usuario o correo electronico</label>
-          <input :class="$style['input-text']" type="text" id="email" v-model="this.email" required />
+          <input :class="$style['input-text']" type="email" id="email" v-model="this.email" required />
 
           <label for="password"> Contraseña </label>
           <div style="
