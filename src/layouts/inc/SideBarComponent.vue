@@ -1,27 +1,3 @@
-<template>
-  <aside class="main-sidebar sidebar-dark-primary" style="background-color: #ffffff;">
-    <br>
-    <div class="d-flex justify-content-center">
-      <img src="/img/logo.png" :alt="$store.state.app.name" style="opacity: 0.8" class="brand-image img-circle">
-    </div>
-    <div class="text-center">
-      <a href="#" class="brand-link" style="border: #ffffff;">
-        <span class="brand-text text-dark ">Dashboard</span>
-      </a>
-    </div>
-    <div class="">
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-          <!-- <nav-item-component class="ml-1" icon="fas fa-home" link="/main">Inicio</nav-item-component> -->
-          <nav-item-component class="ml-1" icon="fas fa-file" link="/main/filemanager">Gestión de
-            Archivos</nav-item-component>
-          <nav-item-component class="ml-1" icon="fas fa-chart-pie" link="/main">Informes</nav-item-component>
-          <!-- <nav-item-component class="ml-1" icon="fas fa-list" link="/main">Listado de tramites</nav-item-component> -->
-        </ul>
-      </nav>
-    </div>
-  </aside>
-</template>
 <script>
 import NavItemComponent from './NavItemComponent.vue'
 
@@ -36,10 +12,34 @@ export default {
 }
 </script>
 
-<style scoped>
-.image {
-  margin-left: .5rem;
-  margin-bottom: 1rem;
+
+<template>
+  <!-- sidebar-dark-primary -->
+  <main class="main-sidebar ">
+    <aside class="d-flex flex-column align-items-center justify-content-center mt-3">
+      <img src="@/assets/favicon/favicon.png" :alt="$store.state.app.name" :class="$style['logo-image']">
+      <h2 :class="$style['dashboard-text']"> Dashboard </h2>
+    </aside>
+
+    <nav class="mt-4">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+        <nav-item-component class="ml-1" icon="mdi mdi-home-outline" link="/main">Inicio</nav-item-component>
+        <nav-item-component class="ml-1" icon="mdi mdi-file-outline" link="/main/filemanager">Gestión de Archivos</nav-item-component>
+        <nav-item-component class="ml-1" icon="mdi mdi-radar" link="/main">Informes</nav-item-component>
+        <nav-item-component class="ml-1" icon="fas fa-list" link="/main">Listado de tramites</nav-item-component>
+      </ul>
+    </nav>
+  </main>
+</template>
+
+
+<style module>
+.logo-image {
+  width: 90px;
+}
+
+.dashboard-text {
+  font-size: 20px;
 }
 
 .brand-image {

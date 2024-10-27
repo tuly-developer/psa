@@ -5,9 +5,7 @@
       <div class="col-6">
         <div class="card">
           <div class="card-body text-center"> 
-            <img src="/img/logo.png" alt="Logo" class="img-fluid"> 
-
-      
+            <img src="@/assets/favicon/favicon.png" alt="Logo" class="img-fluid"> 
           </div>
         </div>
       </div>
