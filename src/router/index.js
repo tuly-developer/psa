@@ -7,7 +7,6 @@ import MainLayout from "../layouts/MainLayout.vue";
 import HomeView from "@/views/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import FileManagerView from "@/views/filemanager/FileManagerView.vue";
-import CopyFileManagerView from "@/views/filemanager/copy-filemanager.vue";
 
 const routes = [
   {
@@ -27,10 +26,6 @@ const routes = [
         path: "filemanager",
         component: FileManagerView,
       },
-      {
-        path : "filemanager-copy",
-        component : CopyFileManagerView
-      }
     ],
   },
 

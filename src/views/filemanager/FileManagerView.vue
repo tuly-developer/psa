@@ -46,6 +46,10 @@ export default {
     },
   },
 
+  beforeMount () {
+    window.document.title = `PSA | File Manager`;
+  },
+
   methods: {
     onFileChange(event) {
       const file = event.target.files[0];
