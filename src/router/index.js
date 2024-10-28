@@ -11,7 +11,7 @@ import copyFilemanagerView from "@/views/filemanager/copy-filemanager.vue";
 
 const routes = [
   {
-    path: "/",
+    path: "/login",
     component: LoginView,
   },
 
@@ -23,14 +23,27 @@ const routes = [
         path: "",
         component: HomeView,
       },
+    ],
+  },
+
+  {
+    path: "/filemanager",
+    component: MainLayout,
+    children: [
       {
-        path: "filemanager",
+        path: "",
         component: FileManagerView,
       },
       {
-        path: "filemanager-copy", component: copyFilemanagerView
+        path : "copy",
+        component : copyFilemanagerView
       }
     ],
+  },
+
+  {
+    path: "/",
+    redirect: "/login",
   },
 
   { path: "/:pathMatch(.*)*", redirect: "/login" },

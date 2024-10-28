@@ -56,19 +56,9 @@ export default {
 
           if (error.response.data.message === 'Email not found') {
             const message = "Este email no esta registrado.";
-            Toast.fire({
-              icon: "error",
-              title: message,
-              timer: 6000,
-            });
             this.errorMessage = message;
           } else if (error.response.data.message === 'Invalid user data') {
             const message = "Contraseña incorrecta.";
-            Toast.fire({
-              icon: "error",
-              title: message,
-              timer: 6000,
-            });
             this.errorMessage = message;
           } else {
             Toast.fire({

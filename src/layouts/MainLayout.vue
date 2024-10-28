@@ -35,8 +35,6 @@ export default {
 
 <style scoped>
 .content-wrapper {
-  margin-right: 1.25rem;
-  margin-left: 3.125;
   background-color: #FAFBFF;
 }
 

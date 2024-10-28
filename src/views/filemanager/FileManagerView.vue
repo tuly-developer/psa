@@ -8,6 +8,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 export default {
   data() {
     return {
+      showSideBar: true,
+
       sectionSelected: "Safit",
       tableSections: ["Safit", "Cobranzas", "Tar.gz"],
 
@@ -53,8 +55,22 @@ export default {
   },
 
   methods: {
+    toggleSideBar() {
+      this.showSideBar = !this.showSideBar;
+      if (this.showSideBar) {
+        document.body.classList.remove("sidebar-collapse");
+      } else {
+        document.body.classList.add("sidebar-collapse");
+      }
+    },
+
     onFileChange(event) {
       const file = event.target.files[0];
+      this.validateFile(file);
+    },
+
+    handleDrop(event) {
+      const file = event.dataTransfer.files[0];
       this.validateFile(file);
     },
 
@@ -155,6 +171,7 @@ export default {
           window.location.reload();
         }
       } catch (err) {
+        this.cancelUploadFile();
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -240,10 +257,45 @@ export default {
     },
 
     changeDateFrom(event) {
+      if (this.dateTo) {
+        console.log("Aqui estoy");
+        const dateFrom = new Date(event.target.value);
+        const dateTo = new Date(this.dateTo);
+
+        if (dateFrom > dateTo) {
+          Swal.fire({
+            icon: "info",
+            title: "Advertencia",
+            text: "La fecha de inicio 'Desde' debe ser menor a la fecha de fin 'Hasta'.",
+          });
+
+          this.dateFrom = "";
+          this.$refs.dateFromInput.value = "";
+          return;
+        }
+      }
+
       this.dateFrom = event.target.value;
     },
 
     changeDateTo(event) {
+      if (this.dateFrom) {
+        const dateFrom = new Date(this.dateFrom);
+        const dateTo = new Date(event.target.value);
+
+        if (dateTo < dateFrom) {
+          Swal.fire({
+            icon: "info",
+            title: "Advertencia",
+            text: "La fecha de fin 'Hasta' debe ser mayor a la fecha de inicio 'Desde'.",
+          });
+
+          this.dateTo = "";
+          this.$refs.dateToInput.value = "";
+          return;
+        }
+      }
+
       this.dateTo = event.target.value;
     },
 
@@ -254,6 +306,15 @@ export default {
     applyFilterByDateAndStatus() {
       this.page = 1;
       this.showFilterOptionsByDateAndStatus = false;
+      this.fetchData();
+    },
+
+    cleanFilters() {
+      this.dateFrom = "";
+      this.dateTo = "";
+      this.status = "";
+      this.showFilterOptionsByDateAndStatus = false;
+
       this.fetchData();
     },
 
@@ -287,11 +348,21 @@ export default {
 <template>
   <main>
     <h1 class="filemanager-title">
-      <span class="filemanager-icon-button mdi mdi-arrow-left"></span>
+      <span
+        v-if="showSideBar"
+        @click="toggleSideBar"
+        class="filemanager-icon-button mdi mdi-arrow-left"
+      ></span>
+
+      <span
+        v-else
+        @click="toggleSideBar"
+        class="filemanager-icon-button mdi mdi-arrow-right"
+      ></span>
       Gestión de Archivos
     </h1>
 
-    <section class="ml-4 mt-5">
+    <section class="my-5 mx-3">
       <!-- Navbar -->
       <nav class="custom-nav ml-1">
         <a
@@ -309,6 +380,7 @@ export default {
       <aside class="table-container">
         <article class="filter-container">
           <div style="position: relative">
+            <!-- Zona de filtros de fecha y status -->
             <aside
               v-show="showFilterOptionsByDateAndStatus"
               style="
@@ -339,9 +411,19 @@ export default {
                 >
               </div>
 
-              <div
+              <label
                 style="
                   margin-top: 20px;
+                  font-size: 14px;
+                  font-weight: 600;
+                  margin-left: 2px;
+                "
+                for="dateFromInput"
+              >
+                Desde
+              </label>
+              <div
+                style="
                   display: flex;
                   justify-content: space-between;
                   padding: 12px 10px;
@@ -355,15 +437,26 @@ export default {
                   :value="dateFrom"
                   @change="changeDateFrom($event)"
                   type="date"
-                  id="dateFrom"
+                  id="dateFromInput"
                   name="birthdaytime"
+                  ref="dateFromInput"
                   style="border: none; font-size: 14px; outline: none"
                 />
               </div>
 
-              <div
+              <label
                 style="
                   margin-top: 20px;
+                  font-size: 14px;
+                  font-weight: 600;
+                  margin-left: 2px;
+                "
+                for="dateToInput"
+              >
+                Hasta
+              </label>
+              <div
+                style="
                   display: flex;
                   justify-content: space-between;
                   padding: 12px 10px;
@@ -377,8 +470,9 @@ export default {
                   :value="dateTo"
                   @change="changeDateTo($event)"
                   type="date"
-                  id="dateFrom"
+                  id="dateToInput"
                   name="birthdaytime"
+                  ref="dateToInput"
                   style="border: none; font-size: 14px; outline: none"
                 />
               </div>
@@ -386,7 +480,10 @@ export default {
               <select
                 :value="`${status}`"
                 style="
+                  font-family: 'Roboto', sans-serif;
                   font-size: 13px;
+                  font-weight: 400;
+                  color: gray;
                   margin-top: 20px;
                   outline: none;
                   padding: 15px 10px;
@@ -405,21 +502,39 @@ export default {
                 <option value="4" label="En cola">En cola</option>
               </select>
 
-              <button
-                @click="applyFilterByDateAndStatus"
-                style="
-                  width: 100%;
-                  margin-top: 20px;
-                  font-size: 13px;
-                  padding: 4px 0px;
-                  color: white;
-                  background: blue;
-                  border-radius: 6px;
-                  border: none;
-                "
-              >
-                Aplicar
-              </button>
+              <div style="display: flex; gap: 10px">
+                <button
+                  v-show="dateFrom || dateTo || status"
+                  @click="cleanFilters"
+                  style="
+                    width: 100%;
+                    margin-top: 20px;
+                    font-size: 13px;
+                    padding: 4px 0px;
+                    color: #dc3545;
+                    border: 1px solid #dc3545;
+                    background: transparent;
+                    border-radius: 6px;
+                  "
+                >
+                  Limpiar filtros
+                </button>
+                <button
+                  @click="applyFilterByDateAndStatus"
+                  style="
+                    width: 100%;
+                    margin-top: 20px;
+                    font-size: 13px;
+                    padding: 4px 0px;
+                    color: white;
+                    background: blue;
+                    border-radius: 6px;
+                    border: none;
+                  "
+                >
+                  Aplicar
+                </button>
+              </div>
             </aside>
           </div>
 
@@ -542,8 +657,12 @@ export default {
                 style="
                   font-size: 12px;
                   outline: none;
-                  width: 50px;
+                  width: 40px;
                   margin-left: 15px;
+                  border-top: none;
+                  border-left: none;
+                  border-right: none;
+                  border-bottom: 1px solid gray;
                 "
               >
                 <option>5</option>
@@ -557,12 +676,22 @@ export default {
               {{ formattedPaginationInfo }}
               <span
                 @click="backPage"
-                style="cursor: pointer; margin-left: 12px; font-size: 16px"
+                :style="
+                  'margin-left: 12px; font-size: 18px;' +
+                  (page === 1
+                    ? 'opacity:0.8; color: gray; cursor: default'
+                    : 'opacity: 1; color: #1a1a32; cursor: pointer')
+                "
                 class="mdi mdi-chevron-left"
               ></span>
               <span
                 @click="nextPage"
-                style="cursor: pointer; margin-left: 25px; font-size: 16px"
+                :style="
+                  'margin-left: 12px; font-size: 18px;' +
+                  (page === lastPage
+                    ? 'opacity:0.8; color: gray'
+                    : 'opacity: 1; color: #1a1a32; cursor: pointer')
+                "
                 class="mdi mdi-chevron-right"
               ></span>
             </p>
@@ -582,7 +711,13 @@ export default {
             class="modal-dialog modal-content py-4 px-4"
             @submit.prevent="uploadFile"
           >
-            <label class="drop-zone" for="fileInput">
+            <label
+              class="drop-zone"
+              for="fileInput"
+              @dragover.prevent
+              @dragenter.prevent
+              @drop.prevent="handleDrop($event)"
+            >
               <span
                 style="font-size: 80px"
                 class="mdi mdi-file-document"
@@ -705,6 +840,8 @@ export default {
 </template>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
 main {
   margin-left: 0px !important;
 }
@@ -712,7 +849,7 @@ main {
 .filemanager-title {
   font-size: 22px;
   background: white;
-  padding: 40px 0px;
+  padding: 40px 15px;
 }
 
 .filemanager-title .filemanager-icon-button {
@@ -741,6 +878,7 @@ main {
 }
 
 .table-container {
+  background-color: white;
   padding-bottom: 10px;
   border: 1px solid #e0e0e0;
   border-radius: 5px;
