@@ -1,11 +1,20 @@
 <script>
 import Swal from "sweetalert2";
-import { Toast } from "../../utils/sweetalert2/toast";
+// import { Toast } from "../../utils/sweetalert2/toast";
 import axios from "@/plugins/axios";
 import moment from "moment";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
+// Components
+import UploadIcon from "../../assets/UploadIcon.vue";
+import ClooudErrorIcon from "../../assets/CloudErrorIcon.vue";
+
 export default {
+  components: {
+    UploadIcon,
+    ClooudErrorIcon,
+  },
+
   data() {
     return {
       showSideBar: true,
@@ -162,13 +171,15 @@ export default {
         });
 
         if (res.status === 200 || res.status === 201 || res.status === 204) {
-          Toast.fire({
+          Swal.fire({
             icon: "success",
             title: "Archivo subido",
-            text: "El archivo se ha subido correctamente.",
-            timer: 3000,
+            text: res.data.message,
+          }).then((result) => {
+            if (result.isConfirmed || result.isDismissed) {
+              window.location.reload();
+            }
           });
-          window.location.reload();
         }
       } catch (err) {
         this.cancelUploadFile();
@@ -547,7 +558,7 @@ export default {
           </div>
 
           <button data-toggle="modal" data-target="#uploadModal">
-            <span style="margin-right: 5px" class="fa-solid fa-upload"></span>
+            <UploadIcon width="16" height="16" fill="white"></UploadIcon>
             Subir Archivos
           </button>
         </article>
@@ -805,7 +816,7 @@ export default {
                     justify-content: space-between;
                   "
                 >
-                  <i class="text-danger fa-solid fa-cloud-arrow-up fa-4x"></i>
+                  <ClooudErrorIcon></ClooudErrorIcon>
 
                   <button
                     type="button"
