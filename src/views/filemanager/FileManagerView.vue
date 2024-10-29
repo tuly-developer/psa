@@ -518,21 +518,23 @@ export default {
         </div>
 
         <table v-else ref="table" class="table" style="width: 100%">
-          <thead class="text-secondary">
+          <thead>
             <tr>
-              <th style="color: silver; font-size: 14px; font-weight: 600">
+              <th class="text-secondary" style="font-size: 14px; font-weight: 600">
                 Tipo
               </th>
-              <th style="color: silver; font-size: 14px; font-weight: 600">
+              <th class="text-secondary" style="font-size: 14px; font-weight: 600">
                 Nombre
               </th>
-              <th style="color: silver; font-size: 14px; font-weight: 600">
+              <th class="text-secondary" style="font-size: 14px; font-weight: 600">
                 Fecha
+                <span class="mdi mdi-arrow-down-thick text-light"></span>
+                <span class="mdi mdi-arrow-up-thick text-dark"></span>
               </th>
-              <!-- <th style="color: silver; font-size: 14px; font-weight: 600">
+              <!-- <th style="font-size: 14px; font-weight: 600">
                 Hora
               </th> -->
-              <th style="color: silver; font-size: 14px; font-weight: 600">
+              <th class="text-secondary" style="font-size: 14px; font-weight: 600">
                 Estado
               </th>
             </tr>
