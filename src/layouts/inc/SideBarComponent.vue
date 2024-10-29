@@ -15,7 +15,7 @@ export default {
     if (!window.localStorage.getItem("token")) {
       this.$router.push("/login");
     }
-    document.title = `PSA | Main`;
+    document.title = `Dashboard | Main`;
   },
 
   methods: {
@@ -31,18 +31,17 @@ export default {
   <!-- sidebar-dark-primary -->
   <main class="main-sidebar">
     <aside class="d-flex flex-column align-items-center justify-content-center mt-3">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Logo-PSA.png" :alt="$store.state.app.name"
-        :class="$style['logo-image']" />
+      <img src="/images/logo.png" :alt="$store.state.app.name" :class="$style['logo-image']" />
       <h2 :class="$style['dashboard-text']">Dashboard</h2>
     </aside>
 
     <nav class="mt-4">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-        <nav-item-component class="ml-1" icon="mdi mdi-home-outline" link="/main">Inicio</nav-item-component>
+        <nav-item-component class="ml-1" icon="mdi mdi-home-outline" link="/">Inicio</nav-item-component>
         <nav-item-component class="ml-1" icon="mdi mdi-file-outline" link="/filemanager">Gestión de
           Archivos</nav-item-component>
-        <nav-item-component class="ml-1" icon="mdi mdi-radar" link="/main">Informes</nav-item-component>
-        <nav-item-component class="ml-1" icon="fas fa-list" link="/main">Listado de tramites</nav-item-component>
+        <!-- <nav-item-component class="ml-1" icon="mdi mdi-radar" link="/">Informes</nav-item-component> -->
+        <!-- <nav-item-component class="ml-1" icon="fas fa-list" link="/">Listado de tramites</nav-item-component> -->
         <p @click="logout" style="text-align: center; cursor: pointer">
           Cerrar sesión
         </p>

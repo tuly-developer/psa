@@ -23,25 +23,25 @@ export default createStore({
       {
         icon: 'fas fa-car',
         label: 'Autos',
-        link: '/main/precios/autos',
+        link: '/precios/autos',
         value: 1,
       },
       {
         icon: 'fas fa-truck',
         label: 'Camiones',
-        link: '/main/precios/camiones',
+        link: '//recios/camiones',
         value: 3,
       },
       {
         icon: 'fas fa-tractor',
         label: 'Maquinaria Agricola',
-        link: '/main/precios/maquinaria',
+        link: '/precios/maquinaria',
         value: 4,
       },
       {
         icon: 'fas fa-motorcycle',
         label: 'Motos',
-        link: '/main/precios/motos',
+        link: '/precios/motos',
         value: 2,
       }
     ],

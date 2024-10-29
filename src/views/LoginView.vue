@@ -13,6 +13,7 @@ export default {
 
       email: "",
       password: "",
+      successMessage: "",
       errorMessage: "",
     };
   },
@@ -20,9 +21,9 @@ export default {
   beforeMount() {
     // if the user is already logged in, redirect to the main page
     if (window.localStorage.getItem("token")) {
-      this.$router.push("/main");
+      this.$router.push("/");
     }
-    document.title = `PSA | Login`;
+    document.title = `Dashboard | Login`;
   },
 
   methods: {
@@ -41,24 +42,30 @@ export default {
 
           window.localStorage.setItem("token", res.data.data.token);
 
-          Toast.fire({
-            icon: "success",
-            title: "Inicio de sesión exitoso",
-            timer: 3000
-          });
+          const message = "Inicio de sesión exitoso. Redirigiendo...";
+          this.successMessage = message;
+
+          // Toast.fire({
+          //   icon: "success",
+          //   title: `Inicio de sesión exitoso. Redirigiendo... <img src="/images/loading.gif" alt="" style="height: 1rem;">`,
+          //   timer: 3000,
+          // });
 
           setTimeout(() => {
-            this.$router.push("/main");
+            this.$router.push("/");
             this.loading = false;
           }, 3000)
+
         } catch (error) {
           this.loading = false;
 
           if (error.response.data.message === 'Email not found') {
-            const message = "Este email no esta registrado.";
+            // const message = "Este email no esta registrado.";
+            const message = "Datos invalidos.";
             this.errorMessage = message;
           } else if (error.response.data.message === 'Invalid user data') {
-            const message = "Contraseña incorrecta.";
+            // const message = "Contraseña incorrecta.";
+            const message = "Datos invalidos.";
             this.errorMessage = message;
           } else {
             Toast.fire({
@@ -76,7 +83,7 @@ export default {
 <template>
   <main :class="$style['main-container']">
     <section :class="$style['img-container']">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Logo-PSA.png" alt="PSA image" />
+      <img src="/images/logo.png" alt="Dashboard image" />
     </section>
 
     <section :class="$style['login-container']">
@@ -112,14 +119,27 @@ export default {
                 background: #dae0e6;
               " :class="showPassword ? 'mdi mdi-eye-off' : 'mdi mdi-eye'"></span>
           </div>
+          <br>
 
-          <p>¿Olividaste tu contraseña? <b>Recuperarla</b></p>
+          <!-- <p>¿Olividaste tu contraseña? <b>Recuperarla</b></p> -->
 
           <button type="submit">
-            {{ loading ? "Cargando..." : "Iniciar sesión" }}
+            <span v-if="loading">
+              <img src="/images/loading.gif" alt="" style="height: 1rem;">
+            </span>
+            <span v-else>
+              Iniciar sesión
+            </span>
           </button>
-          <button type="button">Solicitud usuario concesionario</button>
+          <!-- <button type="button">Solicitud usuario concesionario</button> -->
         </form>
+
+        <!-- Success message -->
+        <div style="padding: 5px 10px; white-space: nowrap; font-size: 13px; font-weight: 600; text-align: center;"
+          v-show="successMessage" class="alert alert-success mt-4 rounded-pill">
+          {{ successMessage }}
+          <!-- <img src="/images/loading.gif" alt="" style="height: 0.75rem;"> -->
+        </div>
 
         <!-- Error message -->
         <div style="padding: 5px 10px; white-space: nowrap; font-size: 13px; font-weight: 600; text-align: center;"
@@ -147,8 +167,8 @@ export default {
 }
 
 .img-container img {
-  width: 280px;
-  height: 280px;
+  width: 400px;
+  height: auto;
 }
 
 /* --------------------------------------------------- */

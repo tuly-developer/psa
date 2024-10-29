@@ -3,7 +3,7 @@ export default {
   name: "HomeView",
 
   beforeMount () {
-    document.title = `PSA | Home`;
+    document.title = `Dashboard | Home`;
   }
 };
 </script>
@@ -16,7 +16,7 @@ export default {
         <div class="card">
           <div class="card-body text-center">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Logo-PSA.png"
+              src="/images/logo.png"
               alt="Logo"
               class="img-fluid"
             />

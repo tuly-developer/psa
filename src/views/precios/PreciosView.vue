@@ -156,7 +156,7 @@ export default {
   computed: {
     ...mapState(['menuItemsPrecio']),
     computedTitle() {
-      const selectedMenuItem = this.menuItemsPrecio.find(item => item.link === `/main/precios/${this.$route.params.subMenu}`);
+      const selectedMenuItem = this.menuItemsPrecio.find(item => item.link === `/precios/${this.$route.params.subMenu}`);
       return selectedMenuItem;
     },
 
@@ -245,7 +245,7 @@ export default {
     },
 
     updateType() {
-      this.selectedType = this.menuItemsPrecio.find(item => item.link === `/main/precios/${this.$route.params.subMenu}`);
+      this.selectedType = this.menuItemsPrecio.find(item => item.link === `/precios/${this.$route.params.subMenu}`);
       this.fetchPrices();
     },
 
