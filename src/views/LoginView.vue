@@ -1,128 +1,264 @@
-<template>
-  <div class="login-box">
-    <div class="login-logo">
-      <a href="/"><b>{{ $store.state.app.name }}</b></a>
-    </div>
-
-    <div class="card shadow-lg">
-      <div class="card-body login-card-body d-flex flex-column justify-content-around p-4">
-        <div class="text-center mb-4">
-          <img src="/img/logo.png" alt="Logo de la empresa" class="login-logo">
-        </div>
-
-        <p class="login-box-msg">Inicia sesión para comenzar tu sesión</p>
-        <form @submit.prevent="loginSubmit" class="d-flex flex-column justify-content-center">
-          <div class="input-group mb-3">
-            <input
-              v-model="email"
-              type="email"
-              class="form-control rounded-pill"
-              placeholder="Correo electrónico"
-            />
-            <div class="input-group-append">
-              <div class="input-group-text rounded-pill">
-                <span class="fas fa-envelope text-primary"></span>
-              </div>
-            </div>
-          </div>
-          <div class="input-group mb-3">
-            <input
-              v-model="password"
-              type="password"
-              class="form-control rounded-pill"
-              placeholder="Contraseña"
-            />
-            <div class="input-group-append">
-              <div class="input-group-text rounded-pill">
-                <span class="fas fa-lock text-primary"></span>
-              </div>
-            </div>
-          </div>
-          <div class="d-flex justify-content-between mt-5 mb-3">
-            <div class="icheck-primary">
-              <input type="checkbox" id="remember" class="mr-2"/>
-              <label for="remember"> Recuérdame </label>
-            </div>
-            <button type="submit" class="btn btn-primary rounded-pill px-4">
-              Iniciar sesión
-            </button>
-          </div>
-        </form>
-        
-        <div v-if="errorMessage" class="alert alert-danger mt-3 rounded-pill">
-          {{ errorMessage }}
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
+// Plugins --- Axios instance
+import instance from "@/plugins/axios";
+
+// Utils
+import { Toast } from "@/utils/sweetalert2/toast";
+
 export default {
   data() {
     return {
-      email: '',
-      password: '',
-      errorMessage: ''
+      loading: false,
+      showPassword: false,
+
+      email: "",
+      password: "",
+      errorMessage: "",
     };
   },
-  beforeMount() {
-    document.body.classList.remove('sidebar-mini');
-    document.body.classList.add('login-page');
-    document.title = `Login | ${this.$store.state.app.name}`;
-  },
-  beforeUnmount() {
-    document.body.classList.remove('login-page');
-    document.body.classList.add('sidebar-mini');
-  },
-  methods: {
-    loginSubmit() {
-      const validUser = 'dev@psa.com';
-      const validPassword = '123123';
 
-      if (this.email === validUser && this.password === validPassword) {
-        this.$router.push({ name: 'home' });
-      } else {
-        this.errorMessage = 'Correo electrónico o contraseña incorrectos';
-      }
+  beforeMount() {
+    // if the user is already logged in, redirect to the main page
+    if (window.localStorage.getItem("token")) {
+      this.$router.push("/main");
     }
-  }
+    document.title = `PSA | Login`;
+  },
+
+  methods: {
+    async loginSubmit() {
+      const body = {
+        email: this.email,
+        password: this.password,
+      };
+
+      if (!this.loading) {
+        this.loading = true;
+
+        try {
+          const res = await instance.post("/login", body);
+          this.errorMessage = "";
+
+          window.localStorage.setItem("token", res.data.data.token);
+
+          Toast.fire({
+            icon: "success",
+            title: "Inicio de sesión exitoso",
+            timer: 3000
+          });
+
+          setTimeout(() => {
+            this.$router.push("/main");
+            this.loading = false;
+          }, 3000)
+        } catch (error) {
+          this.loading = false;
+
+          if (error.response.data.message === 'Email not found') {
+            const message = "Este email no esta registrado.";
+            this.errorMessage = message;
+          } else if (error.response.data.message === 'Invalid user data') {
+            const message = "Contraseña incorrecta.";
+            this.errorMessage = message;
+          } else {
+            Toast.fire({
+              icon: "error",
+              title: "Error al iniciar sesión",
+            });
+          }
+        }
+      }
+    },
+  },
 };
 </script>
 
-<style scoped>
-.login-box {
-  width: 400px;
-  margin: 7% auto;
+<template>
+  <main :class="$style['main-container']">
+    <section :class="$style['img-container']">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Logo-PSA.png" alt="PSA image" />
+    </section>
+
+    <section :class="$style['login-container']">
+      <aside :class="$style['login-box']">
+        <h1>Ingreso al Dashborad</h1>
+
+        <div style="
+            background: #4f4ffb;
+            height: 2px;
+            width: 100%;
+            margin-bottom: 17px;
+          "></div>
+
+        <form @submit.prevent="loginSubmit" method="post">
+          <label for="email"> Nombre de usuario o correo electronico</label>
+          <input :class="$style['input-text']" type="email" id="email" v-model="this.email" required />
+
+          <label for="password"> Contraseña </label>
+          <div style="
+              display: flex;
+              flex-direction: row;
+              border: 1px solid #d1d5d9;
+              border-radius: 4px;
+            ">
+            <input :class="$style['input-password']" :type="showPassword ? 'text' : 'password'" id="password"
+              v-model="this.password" required />
+            <span @click="showPassword = !showPassword" style="
+                display: flex;
+                justify-content: center;
+                width: 9%;
+                padding: 3px 5px;
+                cursor: pointer;
+                background: #dae0e6;
+              " :class="showPassword ? 'mdi mdi-eye-off' : 'mdi mdi-eye'"></span>
+          </div>
+
+          <p>¿Olividaste tu contraseña? <b>Recuperarla</b></p>
+
+          <button type="submit">
+            {{ loading ? "Cargando..." : "Iniciar sesión" }}
+          </button>
+          <button type="button">Solicitud usuario concesionario</button>
+        </form>
+
+        <!-- Error message -->
+        <div style="padding: 5px 10px; white-space: nowrap; font-size: 13px; font-weight: 600; text-align: center;"
+          v-show="errorMessage" class="alert alert-danger mt-4 rounded-pill">
+          {{ errorMessage }}
+        </div>
+      </aside>
+    </section>
+  </main>
+</template>
+
+<style module>
+.main-container {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
 }
 
-.card {
-  border-radius: 1rem;
+.img-container {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background-color: #e7f3fe;
+  width: 50%;
 }
 
-.login-card-body {
-  border-radius: 1rem;
+.img-container img {
+  width: 280px;
+  height: 280px;
+}
+
+/* --------------------------------------------------- */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
+}
+
+.login-box {
+  width: 80%;
+  max-width: 450px;
+}
+
+.login-box h1 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.login-box form {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
 }
 
-.login-logo {
-
+.login-box form label {
+  color: #1a1a32;
+  font-size: 14px;
+  font-weight: 400 !important;
+  margin-top: 10px;
+  margin-bottom: 2px !important;
 }
 
-.input-group .form-control {
-  border-top-left-radius: 1.25rem;
-  border-bottom-left-radius: 1.25rem;
+.login-box form .input-text {
+  font-size: 14px;
+  color: #1a1a32;
+  font-weight: 400;
+  border: 1px solid #d1d5d9;
+  border-radius: 4px;
+  padding: 4px 10px;
+  outline: none;
 }
 
-.input-group .input-group-text {
-  border-top-right-radius: 1.25rem;
-  border-bottom-right-radius: 1.25rem;
+.login-box form .input-password {
+  font-size: 14px;
+  color: #1a1a32;
+  font-weight: 400;
+  width: 91%;
+  border: none;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  padding: 3px 10px;
+  outline: none;
 }
 
-.btn {
-  border-radius: 1.25rem;
+.login-box form p {
+  font-size: 14px;
+  color: #1a1a32;
+  font-weight: 400;
+  margin-top: 10px;
+}
+
+.login-box form p b {
+  color: #4f4ffb;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.login-box form button[type="submit"] {
+  background-color: #4f4ffb;
+  color: white;
+  font-size: 14px;
+  font-weight: 400;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  transition: background-color 0.3s;
+}
+
+.login-box form button[type="submit"]:hover {
+  background-color: #3c3cfc;
+}
+
+.login-box form button[type="button"] {
+  background-color: transparent;
+  border: 1px solid #4f4ffb;
+  color: #4f4ffb;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
+  padding: 5px 10px;
+  margin-top: 10px;
+}
+
+@media screen and (min-width: 900px) {
+  .main-container {
+    justify-content: initial;
+  }
+
+  .img-container {
+    display: flex;
+  }
+
+  .login-container {
+    width: 50%;
+  }
+
+  .login-box {
+    width: 60%;
+  }
 }
 </style>

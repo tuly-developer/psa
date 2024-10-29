@@ -1,8 +1,19 @@
+<script>
+// import NavBarComponent from './inc/NavBarComponent.vue'
+import SideBarComponent from './inc/SideBarComponent.vue'
+export default {
+  components: {
+    // NavBarComponent,
+    SideBarComponent
+  }
+}
+</script>
+
 <template>
-  <div class="wrapper">
+  <main class="wrapper">
     <!-- <navBarComponent /> -->
     <sideBarComponent />
-    
+
     <div class="content-wrapper">
       <router-view class="router-content" />
     </div>
@@ -17,24 +28,13 @@
     </footer> -->
 
     <!-- <aside class="control-sidebar control-sidebar-dark"></aside> -->
-  </div>
+  </main>
 </template>
 
-<script>
-// import NavBarComponent from './inc/NavBarComponent.vue'
-import SideBarComponent from './inc/SideBarComponent.vue'
-export default {
-  components: {
-    // NavBarComponent,
-    SideBarComponent
-  }
-}
-</script>
+
 
 <style scoped>
 .content-wrapper {
-  margin-right: 1.25rem;
-  margin-left: 3.125;
   background-color: #FAFBFF;
 }
 

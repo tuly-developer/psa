@@ -18,6 +18,7 @@ export default createStore({
       type: 2,
       label: "Novedades"
     },
+
     menuItemsPrecio: [
       {
         icon: 'fas fa-car',
@@ -47,6 +48,7 @@ export default createStore({
 
     priceCategory: null,
   },
+
   mutations: {
     increment(state) {
       state.count++;
@@ -61,6 +63,7 @@ export default createStore({
       state.menuIndices.type = type;
     },
   },
+
   actions: {
     increment({ commit }) {
       commit('increment');
@@ -72,5 +75,6 @@ export default createStore({
       commit('setMenuIndicesType', type);
     },
   },
+  
   modules: {},
 });

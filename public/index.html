@@ -1,24 +1,46 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <link rel="stylesheet" href="/adminlte/plugins/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="/adminlte/dist/css/adminlte.min.css?v=3.2.0">
+    <link rel="icon" href="./favicon/favicon.png" />
+
+    <link
+      rel="stylesheet"
+      href="https://pictogrammers.github.io/@mdi/font/2.0.46/css/materialdesignicons.min.css"
+    />
+
+    <link rel="stylesheet" href="/adminlte/dist/css/adminlte.min.css?v=3.2.0" />
+
+    <link
+      rel="stylesheet"
+      href="/adminlte/plugins/fontawesome-free/css/all.min.css"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
-  <body class="hold-transition sidebar-mini">
+
+  <body>
     <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>
+        We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to continue.
+      </strong>
     </noscript>
-    <div id="app" style="background-color: #FAFBFF !important"></div>
+
+    <!-- App -->
+    <div id="app"></div>
+
+    <!-- Scripts -->
     <script src="/adminlte/plugins/jquery/jquery.min.js"></script>
     <script src="/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/adminlte/dist/js/adminlte.min.js?v=3.2.0"></script>
-    <!-- built files will be auto injected -->
   </body>
 </html>

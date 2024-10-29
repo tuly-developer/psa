@@ -20,6 +20,7 @@
   </content>
 </template>
 
+
 <script>
 export default {
   name: 'AboutView',
