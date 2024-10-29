@@ -394,14 +394,14 @@ export default {
                 z-index: 100;
               " class="py-4 px-4">
               <div style="
-                  display: flex;
+                  /* display: flex;
                   align-items: center;
-                  justify-content: space-between;
+                  justify-content: space-between; */
                 ">
-                <h5>Filtros</h5>
-
-                <span @click="viewFilterOptionsByDateAndStatus"
-                  style="color: gray; font-size: 30px; cursor: pointer">&times;</span>
+                <h5 style="margin-bottom: 1rem;">Filtros
+                  <span @click="viewFilterOptionsByDateAndStatus" class="float-right mdi mdi-close"
+                    style="color: gray; font-size: 22px; cursor: pointer"></span>
+                </h5>
               </div>
 
               <!-- <label style="
@@ -468,29 +468,33 @@ export default {
               </select>
 
               <div style="display: flex; gap: 10px">
-                <button v-show="dateFrom || dateTo || status" @click="cleanFilters" style="
-                    width: 100%;
-                    margin-top: 20px;
-                    font-size: 13px;
-                    padding: 4px 0px;
-                    color: #dc3545;
-                    border: 1px solid #dc3545;
-                    background: transparent;
-                    border-radius: 6px;
-                  ">
-                  Limpiar filtros
-                </button>
                 <button @click="applyFilterByDateAndStatus" style="
                     width: 100%;
+                    height: 30px;
                     margin-top: 20px;
                     font-size: 13px;
-                    padding: 4px 0px;
+                    /* padding: 4px 0px; */
                     color: white;
                     background: #0078D4;
                     border-radius: 6px;
                     border: none;
                   ">
                   Aplicar
+                </button>
+              </div>
+              <div style="display: flex; gap: 10px">
+                <button v-show="dateFrom || dateTo || status" @click="cleanFilters" style="
+                    width: 100%;
+                    height: 30px;
+                    margin-top: 20px;
+                    font-size: 13px;
+                    /* padding: 4px 0px; */
+                    color: #dc3545;
+                    border: 1px solid #dc3545;
+                    background: transparent;
+                    border-radius: 6px;
+                  ">
+                  Limpiar filtros
                 </button>
               </div>
             </aside>
