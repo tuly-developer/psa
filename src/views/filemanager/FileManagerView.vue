@@ -582,7 +582,7 @@ export default {
                     ">⬤</span>
                   {{
                     data.status == 1
-                      ? "Procesando..."
+                      ? "Procesando"
                       : data.status == 2
                         ? "Subido"
                         : data.status == 3
