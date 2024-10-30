@@ -243,6 +243,7 @@ export default {
       this.dateFrom = "";
       this.dateTo = "";
       this.status = "";
+      this.orderByMethod = "desc"
 
       this.fetchData();
 
